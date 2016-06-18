@@ -23,14 +23,12 @@ class User
   field :current_sign_in_ip, type: String
   field :last_sign_in_ip,    type: String
 
-  ## Confirmable
-  # field :confirmation_token,   type: String
-  # field :confirmed_at,         type: Time
-  # field :confirmation_sent_at, type: Time
-  # field :unconfirmed_email,    type: String # Only if using reconfirmable
+  # Setting up relation of contact model to User. I would have used embed_many instead of has_many since a list
+  # of contacts will only ever belong so a single user and we don't want to cross pollinate so there's no need
+  # for a separate collection, but mongo has an open bug (https://jira.mongodb.org/browse/SERVER-1068) that prevents
+  # unique indices from being enforced within a single document. Uniqueness enforcement at the DB layer is critical
+  # to prevent race conditions in a distributed environment so went with a has_many relationship and used the
+  # associated foreign key to create the required index
+  has_many :contacts
 
-  ## Lockable
-  # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
-  # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
-  # field :locked_at,       type: Time
 end

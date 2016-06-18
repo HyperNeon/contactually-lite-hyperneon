@@ -35,6 +35,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Devise for User Authentication
 gem 'devise', '~> 4.0'
 
+# Use Phonelib for phone number validations and parsing
+gem 'phonelib'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
@@ -51,4 +54,10 @@ group :development, :test do
 
   # Use rspec for unit tests
   gem 'rspec-rails', '~> 3.4'
+
+  # Use factory_girl for fixtures
+  gem 'factory_girl_rails'
+
+  # Use Faker for generating fake data
+  gem 'faker'
 end
