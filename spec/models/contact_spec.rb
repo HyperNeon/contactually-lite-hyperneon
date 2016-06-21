@@ -65,4 +65,59 @@ RSpec.describe Contact, type: :model do
       end
     end
   end
+
+  describe '.import_contacts' do
+    let(:user) { create(:user) }
+    context 'good file' do
+      let(:test_data) do
+        [
+          ['First Name', 'Last Name', 'Email Address', 'Phone Number', 'Company Name'],
+          ['fName1', 'lName1', 'email1@test.com', '', ''],
+          ['fName2', '', '', '1 (800) 266-8228', 'cName1'],
+          ['fName3', 'lName3', 'fake.com', '', ''],
+          ['', '', '', '037.652.8620', 'cName2']
+        ]
+      end
+      let(:temp_file) { Tempfile.new(['temp','.tsv']) }
+      before do
+        test_data.each { |row| temp_file.write(row.join("\t") + "\n") }
+        temp_file.rewind
+      end
+      subject(:import_contacts) { Contact.import_contacts(user, temp_file) }
+      after { temp_file.unlink }
+
+      it 'creates one new contact per valid row' do
+        import_contacts
+        expect(user.contacts.count).to eq(2)
+      end
+
+      it 'returns a list of invalid rows with error reasons' do
+        expected_result = [
+          { row: 3, errors: ['Email address must be a valid format'] },
+          { row: 4, errors: ['Phone number must be valid'] }
+        ]
+        expect(import_contacts).to eq(expected_result)
+      end
+
+      it 'returns a row error if an exception is raised for a particular row' do
+        allow(Contact).to receive(:new).and_raise(StandardError.new('TEST'))
+        expected_result = (1..4).map { |row| { row: row, errors: ['An unexpected error has occurred while processing this line'] } }
+        expect(import_contacts).to eq(expected_result)
+      end
+    end
+
+    context 'bad file' do
+      it 'raises a ContactImportError if the file can not be read' do
+        file_io = double(readlines: StandardError.new('TEST'), path: 'Test.tsv' )
+        expect{ Contact.import_contacts(user, file_io) }.to raise_error(Contact::ContactImportError,
+          Contact::ContactImportError::FILE_READ_ERROR)
+      end
+
+      it 'returns an ContactImportError if an invalid file extension is provided' do
+        file_io = double(path: 'Test.csv')
+        expect{ Contact.import_contacts(user, file_io) }.to raise_error(Contact::ContactImportError,
+          Contact::ContactImportError::INVALID_FILE_TYPE)
+      end
+    end
+  end
 end

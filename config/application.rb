@@ -26,6 +26,6 @@ module ContactuallyLite
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     # config.active_record.raise_in_transactional_callbacks = true
-    Mongoid.logger.level = Logger::DEBUG
+    Mongoid.logger.level = Logger::INFO
   end
 end
