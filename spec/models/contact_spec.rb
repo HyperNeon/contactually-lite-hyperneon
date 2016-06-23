@@ -93,8 +93,8 @@ RSpec.describe Contact, type: :model do
 
       it 'returns a list of invalid rows with error reasons' do
         expected_result = [
-          { row: 3, errors: ['Email address must be a valid format'] },
-          { row: 4, errors: ['Phone number must be valid'] }
+          { row: 3, errors: ['Email address must be a valid format'], data: test_data[3].join(", ") + "\n"},
+          { row: 4, errors: ['Phone number must be valid'], data: test_data[4].join(", ") + "\n"}
         ]
         expect(import_contacts).to eq(expected_result)
       end

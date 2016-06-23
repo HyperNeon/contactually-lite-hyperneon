@@ -38,6 +38,14 @@ gem 'devise', '~> 4.0'
 # Use Phonelib for phone number validations and parsing
 gem 'phonelib'
 
+# Use react-rails
+gem 'react-rails'
+
+# Use react-bootstrap JS library
+source 'https://rails-assets.org' do
+  gem 'rails-assets-react-bootstrap'
+end
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

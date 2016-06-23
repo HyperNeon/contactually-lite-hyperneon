@@ -40,6 +40,9 @@ class Contact
   index( { first_name: 1, last_name: 1, email_address: 1,
     phone_number: 1, company_name: 1, user_id: 1}, { unique: true, name: 'contact_index' })
 
+  # Define a scope so we can easily limit to only contacts owned by the user in our controllers
+  scope :contacts_for, ->(user = nil) { where(user: user) }
+
   class ContactImportError < StandardError
     INVALID_FILE_TYPE = 'Only .tsv files can be imported'
     FILE_READ_ERROR = 'Something went wrong while processing this file'
@@ -67,11 +70,15 @@ class Contact
           if c.valid?
             c.save
           else
-            errors << { row: index+1, errors: c.errors.messages.values.flatten }
+            errors << { row: index+1, errors: c.errors.messages.values.flatten, data: contact_params.join(", ")}
           end
+        # Rescue at the row level in case we can recover and continue importing other contacts
+        rescue Mongo::Error::OperationFailure
+          # Duplicate entry error
+          errors << { row: index+1, errors: ['A duplicate entry for this contact already exists']}
         rescue
-          # Rescue at the row level in case we can recover and continue importing other contacts
-          errors << { row: index+1, errors: ['An unexpected error has occurred while processing this line'] }
+          # Some other unexpected error, most likely to do with formatting
+          errors << { row: index+1, errors: ['An unexpected error has occurred while processing this line']}
         end
       end
 

@@ -81,4 +81,6 @@ Rails.application.configure do
   # Devise Settings
   #TODO Update with actual server details from Heroku
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+  config.react.variant = :production
 end
