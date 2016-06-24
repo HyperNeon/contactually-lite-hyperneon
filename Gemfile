@@ -52,6 +52,9 @@ gem 'fluxxor-rails'
 # Adding bootstrap-growl for some nicer alerts
 gem 'bootstrap-growl-rails'
 
+# Add rails_12factor as suggested by Heroku
+gem 'rails_12factor', group: 'production'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
