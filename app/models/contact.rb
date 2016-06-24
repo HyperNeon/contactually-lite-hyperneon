@@ -1,6 +1,7 @@
 class Contact
   include Mongoid::Document
-  before_save :format_phone_number, :update_international
+  before_validation :format_phone_number
+  before_save :update_international
 
   # I'd normally set this up to allow a contact to have multiple email addresses or phone numbers
   # but given the scope of the assignment it doesn't seem necessary.
