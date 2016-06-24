@@ -4,12 +4,11 @@
     window.loadContactsTable(<%= raw @contacts.to_json%>);
   });
 </script>
+<div class='page-header'>
+  <h1><%= current_user.email %> Contacts</h1>
 
-<h1><%= current_user.email %> Contacts</h1>
-
-<%= link_to 'New Contact', new_contact_path, class: 'btn btn-default' %>
-<%= link_to 'Import Contacts', select_file_path, class: 'btn btn-default' %>
-
-<br>
+  <%= link_to 'New Contact', new_contact_path, class: 'btn btn-default' %>
+  <%= link_to 'Import Contacts', select_file_path, class: 'btn btn-default' %>
+</div>
 
 <div id="js-contact-table"></div>

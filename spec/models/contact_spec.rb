@@ -16,9 +16,9 @@ RSpec.describe Contact, type: :model do
 
       it { is_expected.to be_valid }
 
-      it 'throws an error if trying to persist a duplicate entry' do
+      it 'is invalid when trying to persist a duplicate entry' do
         contact_with_user.save
-        expect{ create(:contact, contact_with_user.attributes) }.to raise_error(Mongo::Error::OperationFailure)
+        expect(build(:contact, contact_with_user.attributes)).not_to be_valid
       end
 
       context 'format validations' do
@@ -119,5 +119,31 @@ RSpec.describe Contact, type: :model do
           Contact::ContactImportError::INVALID_FILE_TYPE)
       end
     end
+  end
+
+  describe '#update_international' do
+    let(:domestic_contact) { build(:contact, user: user, phone_number: '1 (800) 266-8228') }
+    let(:international_contact) { build(:contact, user: user, phone_number: '+51 1 7459273') }
+    let(:blank_contact) { build(:contact, user: user, phone_number: '') }
+
+    it 'does not do anything for unsaved contacts' do
+      expect(domestic_contact.international_number).to be_nil
+    end
+
+    it 'sets international_number to false when a domestic contact is saved' do
+      domestic_contact.save
+      expect(domestic_contact.international_number).to be false
+    end
+
+    it 'sets international_number to true when a international contact is saved' do
+      international_contact.save
+      expect(international_contact.international_number).to be true
+    end
+
+    it 'sets international_number to false when a blank contact is saved' do
+      blank_contact.save
+      expect(blank_contact.international_number).to be false
+    end
+
   end
 end

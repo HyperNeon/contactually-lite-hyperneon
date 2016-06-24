@@ -94,10 +94,19 @@ window.loadContactsTable = function(contacts) {
         // Render the Contacts table
         render: function() {
             var props = this.props;
-            // Create a contact element for each contact in the store
-            var contacts = this.state.contacts.map(function (contact) {
-                return <Contact contact={contact} key={contact._id.$oid} flux={props.flux} />
-            });
+            // Create a contact element for each contact in the store which matches the filters
+            var contacts = []
+
+            this.state.contacts.forEach(function (contact) {
+                // Only display a row if all active filters are passing
+                if (internationalNumberChecker(contact, this.props.internationalNumbersOnly) &&
+                    extensionNumberChecker(contact, this.props.extensionNumbersOnly) &&
+                    comEmailAddressChecker(contact, this.props.comEmailAddressesOnly))
+                {
+                    contacts.push( <Contact contact={contact} key={contact._id.$oid} flux={props.flux} /> );
+                }
+
+            }.bind(this));
             return (
                 // Create a striped Bootstrap table
                 <Table striped>
@@ -117,6 +126,98 @@ window.loadContactsTable = function(contacts) {
                 </Table>
             );
         }
+    });
+
+    // Returns true if we have an international number of if we're not filtering by internationalNumbersOnly
+    function internationalNumberChecker(contact, internationalNumbersOnly) {
+        return contact.international_number || !internationalNumbersOnly;
+    }
+
+    // Returns true if an extension is in the phonenumber or if we're not filtering by extensionNumbersOnly
+    function extensionNumberChecker(contact, extensionNumbersOnly) {
+        return contact.phone_number.indexOf('#') > -1 || !extensionNumbersOnly;
+    }
+
+    // Returns true if .com is in the email_address or if we're not filtering by extensionNumbersOnly
+    function comEmailAddressChecker(contact, comEmailAddressesOnly) {
+        return /.com$/.test(contact.email_address) || !comEmailAddressesOnly;
+    }
+
+    // Add some more bootstrap React components for help with forms
+    var FormGroup = ReactBootstrap.FormGroup;
+    var ControlLabel = ReactBootstrap.ControlLabel;
+
+    // React component which displays the form for filtering results
+    var SearchBar = React.createClass({
+        // Pass the current status of the filters back up the chain on user input
+        handleChange: function() {
+            this.props.onUserInput(
+                this.refs.internationalNumbersOnly.checked,
+                this.refs.extensionNumbersOnly.checked,
+                this.refs.comEmailAddressesOnly.checked
+            );
+        },
+        render: function() {
+            return (
+                <form>
+                    <ControlLabel>Filters</ControlLabel>
+                    <FormGroup>
+                        <label className='checkbox-inline' >
+                            <input type="checkbox" checked={this.props.internationalNumbersOnly} ref="internationalNumbersOnly"
+                                      onClick={this.handleChange}/> Only International Numbers
+                        </label>
+                        <label className='checkbox-inline' >
+                        <input  type="checkbox" checked={this.props.extensionNumbersOnly} ref="extensionNumbersOnly"
+                                  onChange={this.handleChange}/> Only Numbers With Extensions
+                        </label>
+                        <label className='checkbox-inline' >
+                        <input type="checkbox" checked={this.props.comEmailAddressesOnly}ref="comEmailAddressesOnly"
+                                  onChange={this.handleChange}/> Only .com Email Addresses
+                        </label>
+                    </FormGroup>                          
+                </form>
+            );
+        }
+    });
+
+    // Component which manages state of filters for SearchBar and ContactsTable
+    var SearchableContactTable = React.createClass({
+       // Set the initial state for table filters
+        getInitialState: function() {
+           return {
+               internationalNumbersOnly: false,
+               extensionNumbersOnly: false,
+               comEmailAddressesOnly: false
+           };
+       },
+
+       // Update the state variables on user input
+       handleUserInput: function(internationalNumbersOnly, extensionNumbersOnly, comEmailAddressesOnly) {
+           this.setState({
+               internationalNumbersOnly: internationalNumbersOnly,
+               extensionNumbersOnly: extensionNumbersOnly,
+               comEmailAddressesOnly: comEmailAddressesOnly
+           })
+       },
+
+       render: function() {
+           return (
+               <div>
+                   <SearchBar
+                       internationalNumbersOnly={this.state.internationalNumbersOnly}
+                       extensionNumbersOnly={this.state.extensionNumbersOnly}
+                       comEmailAddressesOnly={this.state.comEmailAddressesOnly}
+                       onUserInput={this.handleUserInput}
+                   />
+                   <ContactsTable
+                       flux={this.props.flux}
+                       internationalNumbersOnly={this.state.internationalNumbersOnly}
+                       extensionNumbersOnly={this.state.extensionNumbersOnly}
+                       comEmailAddressesOnly={this.state.comEmailAddressesOnly}
+                   />
+               </div>
+           )
+       }
     });
 
     // React component which models our individual contacts
@@ -151,7 +252,7 @@ window.loadContactsTable = function(contacts) {
     // Initialize the Fluxxor Store
     fluxContactsStore.init(contacts);
     // Update the div with the ContactTable component
-    ReactDOM.render(<ContactsTable flux={fluxContactsStore.flux}/>,
+    ReactDOM.render(<SearchableContactTable flux={fluxContactsStore.flux}/>,
         document.getElementById('js-contact-table')
     );
 

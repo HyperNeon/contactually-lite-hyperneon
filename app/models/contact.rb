@@ -1,5 +1,6 @@
 class Contact
   include Mongoid::Document
+  before_save :update_international
 
   # I'd normally set this up to allow a contact to have multiple email addresses or phone numbers
   # but given the scope of the assignment it doesn't seem necessary.
@@ -8,6 +9,7 @@ class Contact
   field :email_address, type: String
   field :phone_number, type: String
   field :company_name, type: String
+  field :international_number, type: Boolean
 
   belongs_to :user
   validates :user, presence: true
@@ -39,6 +41,8 @@ class Contact
   # race conditions when running on multiple workers
   index( { first_name: 1, last_name: 1, email_address: 1,
     phone_number: 1, company_name: 1, user_id: 1}, { unique: true, name: 'contact_index' })
+  validates :user, uniqueness: {scope: [:first_name, :last_name, :email_address, :phone_number, :company_name],
+    message: 'A duplicate entry for this contact already exists'}
 
   # Define a scope so we can easily limit to only contacts owned by the user in our controllers
   scope :contacts_for, ->(user = nil) { where(user: user) }
@@ -88,5 +92,18 @@ class Contact
       # If something breaks while processing the file outside of individual rows
       raise ContactImportError.new(ContactImportError::FILE_READ_ERROR)
     end
+  end
+
+  private
+  # A before save callback for setting a field in the DB if the phone number is considered international
+  # Sets it to false if the number is blank or nil or
+  def update_international
+    if self.phone_number.present?
+      self.international_number = Phonelib.default_country != Phonelib.parse(self.phone_number).country
+    else
+      self.international_number = false
+    end
+    # Always need to return true so that the rest of the callback chain is called
+    return true
   end
 end
