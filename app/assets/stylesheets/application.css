@@ -12,4 +12,10 @@
  *
  *= require_tree .
  *= require_self
+ *= require animate
  */
+
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}

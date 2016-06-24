@@ -5,10 +5,40 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <%= stylesheet_link_tag 'application', 'http://getbootstrap.com/dist/css/bootstrap.min.css' %>
+  <%= stylesheet_link_tag 'application', 'http://getbootstrap.com/dist/css/bootstrap-theme.min.css' %>
 </head>
 <body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Contactually Lite</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <% if signed_in? %>
+        <li>
+          <%= link_to 'Sign Out', destroy_user_session_path, method: :delete %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
 
-<%= yield %>
+  <div class="container theme-showcase">
+
+    <% if flash[:alert] %>
+        <div class='alert alert-danger' role='alert'>
+          <p> <%= flash[:alert] %> </p>
+        </div>
+    <% end %>
+
+    <% if flash[:notice] %>
+        <div class='alert alert-info' role='alert'>
+          <p> <%= flash[:notice] %> </p>
+        </div>
+    <% end %>
+
+    <%= yield %>
+
+  </div>
 
 </body>
 </html>

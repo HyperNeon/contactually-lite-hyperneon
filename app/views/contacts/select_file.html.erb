@@ -1,0 +1,14 @@
+<div class='panel panel-default'>
+  <div class='panel-heading'>
+    <h1>Contact Import</h1>
+  </div>
+  <div class='panel-body'>
+    <%= form_tag({action: :import}, multipart: true) do %>
+        <%= label :import_file, 'Select a .tsv contact file to import', class: 'label label-default'%>
+        <%= file_field_tag 'import_file' , required: true, accept: 'text/tsv' %>
+        <br>
+        <%= submit_tag 'Import' , class:'btn btn-success' %>
+        <%= link_to 'Cancel', contacts_path, class: 'btn btn-danger' %>
+    <% end %>
+  </div>
+</div>

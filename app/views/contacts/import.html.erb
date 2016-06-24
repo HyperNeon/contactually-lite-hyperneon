@@ -1,0 +1,11 @@
+<% if @error_message %>
+    <h1>Import Errors Received</h1>
+    <%= link_to 'Return', contacts_path, class: 'btn btn-default'%>
+    <div class='alert alert-danger' role='alert'>
+      <h3>Received the following errors while importing the file:</h3>
+      <p> <%= simple_format @error_message %> </p>
+    </div>
+<% else %>
+    <h1>Import Successful</h1>
+    <%= link_to 'Return', contacts_path, class: 'btn btn-default'%>
+<% end %>

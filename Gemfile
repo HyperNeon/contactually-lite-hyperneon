@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+# Use MongoDB as the database for Active Record
+gem 'mongoid', '~> 5.1.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -32,6 +32,26 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# Use Devise for User Authentication
+gem 'devise', '~> 4.0'
+
+# Use Phonelib for phone number validations and parsing
+gem 'phonelib'
+
+# Use react-rails
+gem 'react-rails'
+
+# Use react-bootstrap JS library
+source 'https://rails-assets.org' do
+  gem 'rails-assets-react-bootstrap'
+end
+
+# Use fluxxor-rails for Fluxxor Datastore
+gem 'fluxxor-rails'
+
+# Adding bootstrap-growl for some nicer alerts
+gem 'bootstrap-growl-rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
@@ -45,4 +65,16 @@ group :development, :test do
 
   # Ensure consistent styling
   gem 'rubocop', require: false
+
+  # Use rspec for unit tests
+  gem 'rspec-rails', '~> 3.4'
+
+  # Use factory_girl for fixtures
+  gem 'factory_girl_rails'
+
+  # Use Faker for generating fake data
+  gem 'faker'
+
+  # Use capybara-webkit for JavaScript Rspec tests
+  gem 'capybara-webkit'
 end
