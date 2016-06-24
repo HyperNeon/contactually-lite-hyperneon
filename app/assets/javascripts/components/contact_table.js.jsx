@@ -91,13 +91,50 @@ window.loadContactsTable = function(contacts) {
                 contacts: flux.store("ContactsStore").getState().contacts
             };
         },
+        getInitialState: function() {
+            return {
+                emailSort: 'UNSORTED'
+            };
+        },
+        handleClick: function(e) {
+            // When the email header is clicked, loop through the possible sort styles and update state
+            e.preventDefault();
+            var current_sort = this.state.emailSort;
+            switch(current_sort) {
+                case 'UNSORTED':
+                    current_sort = 'ASC';
+                    break;
+                case 'ASC':
+                    current_sort = 'DESC';
+                    break;
+                default:
+                    current_sort = 'UNSORTED';
+            }
+
+            this.setState({
+                emailSort: current_sort
+            });
+        },
         // Render the Contacts table
         render: function() {
             var props = this.props;
             // Create a contact element for each contact in the store which matches the filters
-            var contacts = []
+            var contacts = [];
 
-            this.state.contacts.forEach(function (contact) {
+            // Sort the contact_list according to the current state
+            var contact_list = this.state.contacts.slice(0);
+            if (this.state.emailSort == 'ASC') {
+                contact_list.sort(sortContactsByEmail);
+                arrow = "glyphicon glyphicon-circle-arrow-down";
+            } else if (this.state.emailSort == 'DESC') {
+                contact_list.sort(sortContactsByEmail);
+                contact_list.reverse();
+                arrow = "glyphicon glyphicon-circle-arrow-up";
+            } else {
+                arrow = "";
+            }
+
+            contact_list.forEach(function (contact) {
                 // Only display a row if all active filters are passing
                 if (internationalNumberChecker(contact, this.props.internationalNumbersOnly) &&
                     extensionNumberChecker(contact, this.props.extensionNumbersOnly) &&
@@ -105,7 +142,6 @@ window.loadContactsTable = function(contacts) {
                 {
                     contacts.push( <Contact contact={contact} key={contact._id.$oid} flux={props.flux} /> );
                 }
-
             }.bind(this));
             return (
                 // Create a striped Bootstrap table
@@ -114,7 +150,8 @@ window.loadContactsTable = function(contacts) {
                     <tr>
                         <th>First name</th>
                         <th>Last name</th>
-                        <th>Email address</th>
+                        <th><a href="#" onClick={this.handleClick}>Email address<span className={arrow}/></a>
+                        </th>
                         <th>Phone number</th>
                         <th>Company name</th>
                         <th colspan="3"></th>
@@ -141,6 +178,15 @@ window.loadContactsTable = function(contacts) {
     // Returns true if .com is in the email_address or if we're not filtering by extensionNumbersOnly
     function comEmailAddressChecker(contact, comEmailAddressesOnly) {
         return /.com$/.test(contact.email_address) || !comEmailAddressesOnly;
+    }
+
+    //This will sort the contact by Email address
+    function sortContactsByEmail(a, b){
+        var aEmail = a.email_address || '';
+        var bEmail = b.email_address || '';
+        aEmail = aEmail.toLowerCase();
+        bEmail = bEmail.toLowerCase();
+        return ((aEmail < bEmail) ? -1 : ((aEmail > bEmail) ? 1 : 0));
     }
 
     // Add some more bootstrap React components for help with forms
@@ -171,7 +217,7 @@ window.loadContactsTable = function(contacts) {
                                   onChange={this.handleChange}/> Only Numbers With Extensions
                         </label>
                         <label className='checkbox-inline' >
-                        <input type="checkbox" checked={this.props.comEmailAddressesOnly}ref="comEmailAddressesOnly"
+                        <input type="checkbox" checked={this.props.comEmailAddressesOnly} ref="comEmailAddressesOnly"
                                   onChange={this.handleChange}/> Only .com Email Addresses
                         </label>
                     </FormGroup>                          
