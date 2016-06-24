@@ -19,7 +19,7 @@ RSpec.describe 'contacts/show', type: :view do
     expect(rendered).to match(/First Name/)
     expect(rendered).to match(/Last Name/)
     expect(rendered).to match(/test@test.com/)
-    expect(rendered).to match(/1 \(800\) 266-8228/)
+    expect(rendered).to match(/\+1 800-266-8228/)
     expect(rendered).to match(/Company Name/)
   end
 end

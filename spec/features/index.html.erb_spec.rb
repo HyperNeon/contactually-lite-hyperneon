@@ -19,7 +19,7 @@ RSpec.describe 'contacts/index', type: :feature do
     assert_selector 'tr>td', :text => 'First Name', :count => 2
     assert_selector 'tr>td', :text => 'Last Name', :count => 2
     assert_selector 'tr>td', :text => 'test@test.com', :count => 2
-    assert_selector 'tr>td', :text => '1 (800) 266-8228', :count => 2
+    assert_selector 'tr>td', :text => Phonelib.parse('1 (800) 266-8228').full_international, :count => 2
     assert_selector 'tr>td', :text => /\ACompany Name\z/, :count => 1
     assert_selector 'tr>td', :text => /\ACompany Name 2\z/, :count => 1
   end

@@ -1,6 +1,6 @@
 class Contact
   include Mongoid::Document
-  before_save :update_international
+  before_save :format_phone_number, :update_international
 
   # I'd normally set this up to allow a contact to have multiple email addresses or phone numbers
   # but given the scope of the assignment it doesn't seem necessary.
@@ -68,7 +68,7 @@ class Contact
           # Split each line by tabs
           contact_params = line.split("\t")
           c = Contact.new(first_name: contact_params[0], last_name: contact_params[1], email_address: contact_params[2],
-            phone_number: Phonelib.parse(contact_params[3]).full_international, company_name: contact_params[4], user: user)
+            phone_number: contact_params[3], company_name: contact_params[4], user: user)
 
           # Save if valid, otherwise add the row to the list of errors
           if c.valid?
@@ -105,5 +105,10 @@ class Contact
     end
     # Always need to return true so that the rest of the callback chain is called
     return true
+  end
+
+  # A before save callback for normalizing the phonenumber into Phonelib full_international format
+  def format_phone_number
+    self.phone_number = Phonelib.parse(self.phone_number).full_international
   end
 end
