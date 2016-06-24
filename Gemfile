@@ -46,6 +46,12 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-react-bootstrap'
 end
 
+# Use fluxxor-rails for Fluxxor Datastore
+gem 'fluxxor-rails'
+
+# Adding bootstrap-growl for some nicer alerts
+gem 'bootstrap-growl-rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
@@ -68,4 +74,7 @@ group :development, :test do
 
   # Use Faker for generating fake data
   gem 'faker'
+
+  # Use capybara-webkit for JavaScript Rspec tests
+  gem 'capybara-webkit'
 end

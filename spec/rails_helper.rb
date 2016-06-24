@@ -5,6 +5,10 @@ require File.expand_path('../../config/environment', __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'spec_helper'
 require 'rspec/rails'
+# Load capybara for javascript testing
+require 'capybara/rspec'
+require 'capybara/webkit/matchers'
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -73,4 +77,18 @@ RSpec.configure do |config|
   config.include Devise::TestHelpers, type: :controller
   config.include Devise::TestHelpers, type: :view
   config.include RequestSpecHelper, type: :request
+  config.include RequestSpecHelper, type: :feature
+
+  # Include Capybara Matchers
+  config.include Capybara::Webkit::RspecMatchers, type: :feature
+end
+
+# Configure Capybara
+Capybara.configure do |config|
+  config.javascript_driver = :webkit
+end
+
+# Configure Capybara Webkit
+Capybara::Webkit.configure do |config|
+  config.allow_url('getbootstrap.com')
 end

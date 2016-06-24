@@ -75,7 +75,7 @@ class Contact
         # Rescue at the row level in case we can recover and continue importing other contacts
         rescue Mongo::Error::OperationFailure
           # Duplicate entry error
-          errors << { row: index+1, errors: ['A duplicate entry for this contact already exists']}
+          errors << { row: index+1, errors: ['A duplicate entry for this contact already exists'], data: contact_params.join(", ")}
         rescue
           # Some other unexpected error, most likely to do with formatting
           errors << { row: index+1, errors: ['An unexpected error has occurred while processing this line']}

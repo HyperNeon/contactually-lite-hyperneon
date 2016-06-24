@@ -37,6 +37,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    addressable (2.4.0)
     arel (6.0.3)
     ast (2.1.0)
     astrolabe (1.3.1)
@@ -48,10 +49,21 @@ GEM
     bcrypt (3.1.11)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootstrap-growl-rails (3.1.3)
     bson (4.1.1)
     builder (3.2.2)
     byebug (5.0.0)
       columnize (= 0.9.0)
+    capybara (2.7.1)
+      addressable
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
+    capybara-webkit (1.11.1)
+      capybara (>= 2.3.0, < 2.8.0)
+      json
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
@@ -78,6 +90,8 @@ GEM
       railties (>= 3.0.0)
     faker (1.6.3)
       i18n (~> 0.5)
+    fluxxor-rails (1.7.3)
+      railties (>= 3.1)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     i18n (0.7.0)
@@ -212,16 +226,21 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  bootstrap-growl-rails
   byebug
+  capybara-webkit
   coffee-rails (~> 4.1.0)
   devise (~> 4.0)
   factory_girl_rails
   faker
+  fluxxor-rails
   jbuilder (~> 2.0)
   jquery-rails
   mongoid (~> 5.1.0)
